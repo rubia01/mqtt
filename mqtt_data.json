@@ -1,0 +1,209 @@
+[
+  {
+    "time": "2025-10-29T09:07:01.207Z",
+    "topic": "1022/192.168.99.106/CMD/ARGS/PUB/mscSensorManage",
+    "data": [
+      {
+        "mscIp": "192.168.99.103",
+        "mscTypeId": 4,
+        "hardVersion": null,
+        "softVersion": null,
+        "updateTime": null,
+        "sampleInterval": null,
+        "channelConfigs": [
+          {
+            "channelId": 1,
+            "monitorId": 17,
+            "sensorName": "VAC-01",
+            "enable": 1,
+            "args": [
+              {
+                "name": "k",
+                "description": "k",
+                "value": 100
+              },
+              {
+                "name": "b",
+                "description": "b",
+                "value": -250
+              }
+            ],
+            "base": 0,
+            "initData": 0
+          }
+        ],
+        "mscType": "抓拍相机",
+        "isOnline": false
+      },
+      {
+        "mscIp": "192.168.99.104",
+        "mscTypeId": 4,
+        "hardVersion": null,
+        "softVersion": null,
+        "updateTime": null,
+        "sampleInterval": null,
+        "channelConfigs": [
+          {
+            "channelId": 1,
+            "monitorId": 17,
+            "sensorName": "VAC-02",
+            "enable": 1,
+            "args": [
+              {
+                "name": "k",
+                "description": "k",
+                "value": 100
+              },
+              {
+                "name": "b",
+                "description": "b",
+                "value": -250
+              }
+            ],
+            "base": 0,
+            "initData": 0
+          }
+        ],
+        "mscType": "抓拍相机"
+      },
+      {
+        "mscIp": "192.168.99.101",
+        "mscTypeId": 5,
+        "hardVersion": "V4.0",
+        "softVersion": "V3.1.1",
+        "category": "naodu",
+        "updateTime": null,
+        "sampleInterval": 30,
+        "channelConfigs": [
+          {
+            "channelId": 1,
+            "monitorId": 6,
+            "sensorName": "DIS-01",
+            "args": {
+              "x": 46,
+              "y": 261,
+              "w": 53,
+              "h": 81,
+              "xDistance": 2.15,
+              "yDistance": 15.75,
+              "baseFlag": 0,
+              "baseX": 148.561966,
+              "baseY": 613.43103,
+              "leftArg": "1.561",
+              "rightArg": 1
+            },
+            "base": 613.43103
+          },
+          {
+            "channelId": 2,
+            "monitorId": 6,
+            "sensorName": "DIS-02",
+            "args": {
+              "x": 965,
+              "y": 245,
+              "w": 54,
+              "h": 91,
+              "xDistance": 2.15,
+              "yDistance": 15.75,
+              "baseFlag": 0,
+              "baseX": 1980.12146,
+              "baseY": 585.682129,
+              "leftArg": "1.561",
+              "rightArg": 1
+            },
+            "base": 585.682129
+          },
+          {
+            "channelId": 3,
+            "monitorId": 6,
+            "sensorName": "BDIS-01",
+            "args": {
+              "x": 753,
+              "y": 480,
+              "w": 46,
+              "h": 91,
+              "xDistance": 2.38,
+              "yDistance": 31.5,
+              "baseFlag": 1,
+              "baseX": 1553.828735,
+              "baseY": 1062.215942,
+              "leftArg": "1.561",
+              "rightArg": 1
+            },
+            "base": 1062.215942
+          }
+        ],
+        "mscType": "光电挠度仪（单摄）"
+      },
+      {
+        "mscIp": "192.168.99.102",
+        "mscTypeId": 5,
+        "hardVersion": "",
+        "softVersion": "",
+        "category": "naodu",
+        "updateTime": null,
+        "sampleInterval": 30,
+        "channelConfigs": [
+          {
+            "channelId": 1,
+            "monitorId": 6,
+            "sensorName": "DIS-03",
+            "args": {
+              "x": 13,
+              "y": 207,
+              "w": 46,
+              "h": 84,
+              "xDistance": 2,
+              "yDistance": 14.25,
+              "baseFlag": 0,
+              "baseX": 71.504654,
+              "baseY": 504.942505,
+              "leftArg": "1.566",
+              "rightArg": 1
+            },
+            "base": 504.942505
+          },
+          {
+            "channelId": 2,
+            "monitorId": 6,
+            "sensorName": "DIS-04",
+            "args": {
+              "x": 969,
+              "y": 204,
+              "w": 68,
+              "h": 117,
+              "xDistance": 2,
+              "yDistance": 14.25,
+              "baseFlag": 0,
+              "baseX": 2011.445312,
+              "baseY": 542.81604,
+              "leftArg": "1.566",
+              "rightArg": 1
+            },
+            "base": 542.81604
+          },
+          {
+            "channelId": 3,
+            "monitorId": 6,
+            "sensorName": "BDIS-02",
+            "args": {
+              "x": 221,
+              "y": 460,
+              "w": 50,
+              "h": 83,
+              "xDistance": 2.38,
+              "yDistance": 28.5,
+              "baseFlag": 1,
+              "baseX": 490.720123,
+              "baseY": 1031.09082,
+              "leftArg": "1.566",
+              "rightArg": 1
+            },
+            "base": 1031.09082
+          }
+        ],
+        "mscType": "光电挠度仪（单摄）"
+      }
+    ]
+  }
+]

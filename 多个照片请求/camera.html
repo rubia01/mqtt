@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>实时摄像头画面 - 无滚动全屏显示</title>
+    <style>
+        /* 0. 关键设置：确保 HTML 和 BODY 占据整个视口 */
+        html, body {
+            height: 100%; /* 确保高度继承 */
+        }
+        
+        /* 1. 基础布局和重置 */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* 强制隐藏滚动条 */
+        }
+
+        h3 {
+            margin: 5px 0 0 0;
+            text-align: center;
+            padding: 5px;
+            color: #ccc;
+            font-size: 16px;
+        }
+        
+        /* 7. 布局切换按钮样式 */
+        #controls {
+            padding: 5px;
+            text-align: center;
+            background-color: #222;
+            flex-shrink: 0; /* 不允许被压缩 */
+        }
+        #controls button {
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 3px;
+        }
+
+        /* 2. 图像容器布局：占据剩余所有空间 */
+        #images-container {
+            flex-grow: 1; /* 占据 body 的剩余空间 */
+            display: grid;
+            gap: 2px;
+            padding: 2px;
+            background-color: #000;
+            width: 100vw; /* 占据整个视口宽度 */
+            height: 100%; /* 占据 flex 容器的剩余高度 */
+            box-sizing: border-box; /* 确保 padding 和 border 不会增加尺寸 */
+        }
+
+        /* 3. 单个图片瓦片样式 */
+        .image-tile {
+            position: relative;
+            background-color: #000;
+            cursor: pointer;
+            overflow: hidden;
+            border: 1px solid #333;
+            
+            /* 确保图片在网格单元内完全填充并居中 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-tile img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 保持长宽比，并完整显示在瓦片内 */
+            display: block;
+        }
+
+        /* 4. IP 地址显示样式 */
+        .ip-display {
+            position: absolute;
+            top: 5px; 
+            left: 5px;
+            background-color: rgba(0, 0, 0, 0.75); 
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 14px;
+            z-index: 10;
+        }
+        
+        /* 5. 全屏显示时的样式优化 */
+        .image-tile:fullscreen {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            border: none;
+            background-color: #000;
+        }
+
+        .image-tile:fullscreen img {
+            object-fit: contain; 
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <h3>实时多路图像 - 监控墙 (点击图片切换全屏)</h3>
+    
+    <div id="controls">
+        <button onclick="changeLayout(1)">1 x 1</button>
+        <button onclick="changeLayout(2)">2 x 2</button>
+        <button onclick="changeLayout(3)">3 x 3</button>
+    </div>
+    
+    <div id="images-container">
+        </div>
+
+    <script>
+        const ws = new WebSocket("ws://localhost:8081");
+        const imagesContainer = document.getElementById('images-container');
+
+        const activeIPs = new Set();
+        
+        // --- 🎯 布局切换函数 ---
+        function changeLayout(cols) {
+            // 设置新的 CSS Grid 布局
+            imagesContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            
+            // 确保行数与列数一致，以保证每个网格单元是正方形或近似正方形
+            imagesContainer.style.gridTemplateRows = `repeat(${cols}, 1fr)`;
+            
+            // 控制显示/隐藏瓦片
+            const tiles = imagesContainer.getElementsByClassName('image-tile');
+            const maxTiles = cols * cols;
+            
+            // 确保所有已创建的瓦片都按照当前布局的槽位进行显示/隐藏
+            for (let i = 0; i < tiles.length; i++) {
+                tiles[i].style.display = (i < maxTiles) ? 'flex' : 'none';
+            }
+
+            console.log(`Layout changed to ${cols}x${cols}`);
+        }
+        
+        // ----------------------
+        function toggleFullscreen(element) {
+            // 全屏 API 逻辑保持不变
+            if (document.fullscreenElement === element) {
+                document.exitFullscreen();
+            } else if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+        // ----------------------
+
+        ws.onopen = function () {
+            console.log('WebSocket connection established.');
+        };
+        
+        ws.onmessage = function (event) {
+            try {
+                const payload = JSON.parse(event.data);
+                const ip = payload.ip;
+                const base64Image = payload.image;
+
+                const safeId = ip.replace(/[./]/g, '_');
+                let imageWrapper = document.getElementById(`image-wrapper-${safeId}`);
+
+                if (!imageWrapper) {
+                    // 1. 创建新的图片瓦片
+                    imageWrapper = document.createElement('div');
+                    imageWrapper.id = `image-wrapper-${safeId}`;
+                    imageWrapper.className = 'image-tile';
+                    
+                    // 2. 添加点击事件监听器
+                    imageWrapper.addEventListener('click', () => {
+                        toggleFullscreen(imageWrapper);
+                    });
+                    
+                    // 创建图片元素
+                    const img = document.createElement('img');
+                    img.id = `image-${safeId}`;
+                    img.alt = `实时画面 - ${ip}`;
+
+                    // 创建 IP 地址显示元素
+                    const ipDisplay = document.createElement('span');
+                    ipDisplay.className = 'ip-display';
+                    ipDisplay.textContent = ip;
+                    
+                    // 组合元素
+                    imageWrapper.appendChild(img);
+                    imageWrapper.appendChild(ipDisplay);
+                    imagesContainer.appendChild(imageWrapper);
+                    
+                    activeIPs.add(ip);
+                    
+                    // 确保新瓦片在当前布局中显示
+                    // 由于新瓦片被添加，我们重新应用布局
+                    const currentCols = getCurrentLayoutCols(); 
+                    changeLayout(currentCols); 
+
+                    console.log(`Created new display for IP: ${ip}`);
+                }
+
+                // 3. 更新图片源
+                const imgElement = document.getElementById(`image-${safeId}`);
+                imgElement.src = `data:image/jpeg;base64,${base64Image}`;
+
+            } catch (error) {
+                console.error('Error processing message:', error);
+            }
+        };
+
+        function getCurrentLayoutCols() {
+            // 简单地从 style 属性中解析当前列数，如果解析失败则默认为 2
+            const style = imagesContainer.style.gridTemplateColumns;
+            const match = style.match(/repeat\((\d+),/);
+            return match ? parseInt(match[1]) : 2;
+        }
+
+        // 🎯 页面加载完成后，设置默认布局 (例如 2x2)
+        window.onload = () => {
+            changeLayout(2); 
+            // 监听窗口大小变化，以保持布局在视口内
+            window.addEventListener('resize', () => {
+                const currentCols = getCurrentLayoutCols();
+                // 重新应用布局，这会根据新的视口尺寸重新计算网格单元大小
+                changeLayout(currentCols); 
+            });
+        };
+    </script>
+</body>
+</html>
